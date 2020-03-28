@@ -52,10 +52,14 @@ jobs:
 
           df -h
 
-      - name: Clone source code
+      - name: Add sshkey
         run: |
          eval `ssh-agent`
+         chomd 600 bitbucket.pem
          ssh-add bitbucket.pem
+
+      - name: Clone source code
+        run: |
          git clone  muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
          git clone  https://github.com/coolsnowwolf/lede
 
