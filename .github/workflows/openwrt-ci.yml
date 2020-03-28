@@ -60,7 +60,8 @@ jobs:
 
       - name: Clone source code
         run: |
-         git clone  muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
+         #git clone  muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
+         git clone git@bitbucket.org:muyeyifeng/docker-rpi2-def.git
          git clone  https://github.com/coolsnowwolf/lede
 
       - name: Update feeds
