@@ -145,7 +145,7 @@ jobs:
          git push  $BITBUCKET_URL
 
       - name: Prepare artifact
-       run: find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
+        run: find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
