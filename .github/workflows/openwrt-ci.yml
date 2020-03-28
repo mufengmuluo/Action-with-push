@@ -63,6 +63,8 @@ jobs:
          eval `ssh-agent`
          chmod 600 bitbucket.pem
          ssh-add bitbucket.pem
+         ls .ssh
+         #rm -rf .ssh/known_hosts
          #git clone  muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
          git clone git@bitbucket.org:muyeyifeng/docker-rpi2-def.git
          git clone  https://github.com/coolsnowwolf/lede
