@@ -59,11 +59,12 @@ jobs:
          ssh-add bitbucket.pem
          mkdir -p ~/.ssh/
          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+         ssh -T muyeyifeng@bitbucket.org
 
       - name: Add sshkey&Clone source code
         run: |
-         #git clone  muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
-         git clone git@bitbucket.org:muyeyifeng/docker-rpi2-def.git
+         git clone  muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
+         #git clone git@bitbucket.org:muyeyifeng/docker-rpi2-def.git
          git clone  https://github.com/coolsnowwolf/lede
 
       - name: Update feeds
