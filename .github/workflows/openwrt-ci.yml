@@ -55,7 +55,7 @@ jobs:
       - name: Add sshkey
         run: |
          eval `ssh-agent`
-         chomd 600 bitbucket.pem
+         chmod 600 bitbucket.pem
          ssh-add bitbucket.pem
 
       - name: Clone source code
