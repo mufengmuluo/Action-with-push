@@ -54,6 +54,7 @@ jobs:
 
       - name: Clone source code
         run: |
+         eval `ssh-agent`
          ssh-add bitbucket.pem
          git clone  muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
          git clone  https://github.com/coolsnowwolf/lede
