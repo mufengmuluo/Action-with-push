@@ -85,7 +85,7 @@ jobs:
           ls $BITBUCKET_NAME
           echo "======================="
           echo "======================="
-          echo "lede"
+          echo "Lede"
           echo "======================="
           ls lede
           echo "======================="
