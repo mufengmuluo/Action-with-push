@@ -17,11 +17,13 @@ on:
       - master
 
 env:
-  DEVICE: rpi2
+  DEVICE: bcm27xx
+  DEVICE_SUB: bcm2709
   CONFIGFILE_NAME: rpi2.config.seed
-  DOCKER_HUB_NAME: docker-rpi2-def
-  DOCKER_HUB_URL: muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
-  SSH_key: bitbucket.pem
+  BITBUCKET_TESTUSER: muyeyifeng@bitbucket.org
+  BITBUCKET_NAME: docker-rpi2-def
+  BITBUCKET_URL: muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
+  SSH_KEY: bitbucket.pem
   ROOTFS_FILE_NAME: openwrt-bcm27xx-bcm2709-rpi-2-rootfs.tar.gz
 
 jobs:
@@ -60,15 +62,15 @@ jobs:
 
           df -h
 
-      - name: Add sshkey&Clone source code
+      - name: Add SSH-key&Clone source code
         run: |
          eval `ssh-agent`
-         chmod 600 bitbucket.pem
-         ssh-add bitbucket.pem
+         chmod 600 $SSH_KEY
+         ssh-add $SSH_KEY
          mkdir -p ~/.ssh/
          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
-         ssh -T muyeyifeng@bitbucket.org
-         git clone  muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
+         ssh -T $BITBUCKET_TESTUSER
+         git clone  $BITBUCKET_URL
          git clone  https://github.com/coolsnowwolf/lede
 
       - name: Update feeds
@@ -76,9 +78,8 @@ jobs:
           echo "======================="
           echo "Docker"
           echo "======================="
-          ls docker-rpi2-def
+          ls $BITBUCKET_NAME
           echo "======================="
-          echo "****************************************"
           echo "======================="
           echo "lede"
           echo "======================="
@@ -90,7 +91,7 @@ jobs:
 
       - name: Generate configuration file
         run: |
-          cp rpi2.config.seed lede/defconfig
+          cp $CONFIGFILE_NAME lede/defconfig
           cd lede
           ls
           cat defconfig >> .config
@@ -120,31 +121,21 @@ jobs:
 
       - name: Prepare to push
         run: |
-          rm -rf ./docker-rpi2-def/openwrt-bcm27xx-bcm2709-rpi-2-rootfs.tar.gz
+          rm -rf ./$BITBUCKET_NAME/$ROOTFS_FILE_NAME
           echo "======================="
-          ls ./docker-rpi2-def/
+          ls ./$BITBUCKET_NAME/
           echo "======================="
-          cp ./lede/bin/targets/bcm27xx/bcm2709/openwrt-bcm27xx-bcm2709-rpi-2-rootfs.tar.gz ./docker-rpi2-def/
-          ls ./docker-rpi2-def/
+          cp ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$ROOTFS_FILE_NAME ./$BITBUCKET_NAME/
+          ls ./$BITBUCKET_NAME/
           echo "======================="
 
       - name: Push bitbucket
         run: |
-          eval `ssh-agent`
-          chmod 600 bitbucket.pem
-          ssh-add bitbucket.pem
-          mkdir -p ~/.ssh/
-          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
-          ssh -T muyeyifeng@bitbucket.org
-          cd docker-rpi2-def
-          git push  muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
-
-
-      #- name: Prepare artifact
-       #run: find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
-
-      #- name: Upload artifact
-        #uses: actions/upload-artifact@master
-        #with:
-          #name: OpenWrt firmware
-          #path: ./lede/bin/targets/
+         eval `ssh-agent`
+         chmod 600 $SSH_KEY
+         ssh-add $SSH_KEY
+         mkdir -p ~/.ssh/
+         ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+         ssh -T $BITBUCKET_TESTUSER
+         cd $BITBUCKET_NAME
+         git push  $BITBUCKET_URL
