@@ -109,9 +109,8 @@ jobs:
           cp ./lede/bin/targets/bcm27xx/bcm2709/openwrt-bcm27xx-bcm2709-rpi-2-rootfs.tar.gz ./docker-rpi2-def/
           ls ./docker-rpi2-def/
           echo "======================="
-
-       - name: Push bitbucket
-         run: |
+      - name: Push bitbucket
+        run: |
           eval `ssh-agent`
           chmod 600 bitbucket.pem
           ssh-add bitbucket.pem
