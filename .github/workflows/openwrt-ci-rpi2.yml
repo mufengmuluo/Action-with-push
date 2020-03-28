@@ -16,6 +16,14 @@ on:
     branches: 
       - master
 
+env:
+  DEVICE: rpi2
+  CONFIGFILE_NAME: rpi2.config.seed
+  DOCKER_HUB_NAME: docker-rpi2-def
+  DOCKER_HUB_URL: muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
+  SSH_key: bitbucket.pem
+  ROOTFS_FILE_NAME: openwrt-bcm27xx-bcm2709-rpi-2-rootfs.tar.gz
+
 jobs:
 
   build:
