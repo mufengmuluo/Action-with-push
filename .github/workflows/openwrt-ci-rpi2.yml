@@ -7,7 +7,7 @@
 # <https://github.com/KFERMercer/OpenWrt-CI>
 # 
 
-name: OpenWrt-CI-N1
+name: OpenWrt-CI-RPI2
 
 on:
   schedule:
@@ -61,22 +61,23 @@ jobs:
          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
          ssh -T muyeyifeng@bitbucket.org
          git clone  muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
-         #git clone git@bitbucket.org:muyeyifeng/docker-rpi2-def.git
          git clone  https://github.com/coolsnowwolf/lede
 
       - name: Update feeds
         run: |
           ls
-          find dl -size -1024c -exec rm -f {} \;
           cd lede
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
       - name: Generate configuration file
         run: |
+          cp rpi2.config.seed lede/defconfig
+          cd lede
           ls
-          cp n1.config lede/.config
-          cat lede/.config
+          cat defconfig >> .config
+          make defconfig
+          cat .config
 
       - name: Make download
         run: |
@@ -99,11 +100,33 @@ jobs:
           du -h --max-depth=1 ./build_dir
           du -h --max-depth=1 ./bin
 
-      - name: Prepare artifact
-        run: find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
+      - name: Prepare to push
+        run: |
+          rm -rf ./docker-rpi2-def/openwrt-bcm27xx-bcm2709-rpi-2-rootfs.tar.gz
+          echo "======================="
+          ls ./docker-rpi2-def/
+          echo "======================="
+          cp ./lede/bin/targets/bcm27xx/bcm2709/openwrt-bcm27xx-bcm2709-rpi-2-rootfs.tar.gz ./docker-rpi2-def/
+          ls ./docker-rpi2-def/
+          echo "======================="
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@master
-        with:
-          name: OpenWrt firmware
-          path: ./lede/bin/targets/
+       - name: Push bitbucket
+         run: |
+          eval `ssh-agent`
+          chmod 600 bitbucket.pem
+          ssh-add bitbucket.pem
+          mkdir -p ~/.ssh/
+          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+          ssh -T muyeyifeng@bitbucket.org
+          cd docker-rpi2-def
+          git push  muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
+
+
+      #- name: Prepare artifact
+       #run: find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
+
+      #- name: Upload artifact
+        #uses: actions/upload-artifact@master
+        #with:
+          #name: OpenWrt firmware
+          #path: ./lede/bin/targets/
