@@ -56,23 +56,12 @@ jobs:
         run: |
          eval `ssh-agent`
          chmod 600 bitbucket.pem
-        #ssh-add bitbucket.pem
-
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          name: bitbucket.pem # optional
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-          config: ${{ secrets.CONFIG }} # ssh_config; optional
+         ssh-add bitbucket.pem
+         mkdir -p ~/.ssh/
+         ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
 
       - name: Add sshkey&Clone source code
         run: |
-         #eval `ssh-agent`
-         #chmod 600 bitbucket.pem
-         #ssh-add bitbucket.pem
-         #ls /home/ubuntu/.ssh
-         #rm -rf .ssh/known_hosts
          #git clone  muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
          git clone git@bitbucket.org:muyeyifeng/docker-rpi2-def.git
          git clone  https://github.com/coolsnowwolf/lede
