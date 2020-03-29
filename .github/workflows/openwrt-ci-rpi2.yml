@@ -25,10 +25,6 @@ env:
   BITBUCKET_URL: muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
   SSH_KEY: bitbucket.pem
   ROOTFS_FILE_NAME: openwrt-bcm27xx-bcm2709-rpi-2-rootfs.tar.gz
-  EXT4_FACTORYF_NAME: openwrt-bcm27xx-bcm2709-rpi-2-ext4-factory.img.gz
-  EXT4_SYSUPGRADE_NAME: openwrt-bcm27xx-bcm2709-rpi-2-ext4-sysupgrade.img.gz
-  SQUASHFS_FACTORYF_NAME: openwrt-bcm27xx-bcm2709-rpi-2-squashfs-factory.img.gz
-  SQUASHFS_SYSUPGRADE_NAME: openwrt-bcm27xx-bcm2709-rpi-2-squashfs-sysupgrade.img.gz
 
 jobs:
 
@@ -142,6 +138,8 @@ jobs:
          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
          ssh -T $BITBUCKET_TESTUSER
          cd $BITBUCKET_NAME
+         git add .
+         git commit -m "Build by github actions"
          git push  $BITBUCKET_URL
 
       - name: Prepare artifact
@@ -150,5 +148,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
-          name: $EXT4_FACTORYF_NAME
-          path: ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_FACTORYF_NAME
+          name: OPENWRT-$DEVICE-$DEVICE_SUB
+          path: ./lede/bin/targets/$DEVICE/$DEVICE_SUB/
