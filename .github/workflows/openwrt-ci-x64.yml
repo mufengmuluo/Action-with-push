@@ -130,7 +130,7 @@ jobs:
           ls ./$BITBUCKET_NAME/
           echo "======================="
           cp ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$ROOTFS_FILE_NAME ./$BITBUCKET_NAME/
-          cp ./$DOCKERFILE_NAME ./$BITBUCKET_NAME/Dockerfile
+          cp ./$DOCKERFILE ./$BITBUCKET_NAME/Dockerfile
           cp ./README.md ./$BITBUCKET_NAME/README.md
           ls ./$BITBUCKET_NAME/
           echo "======================="
