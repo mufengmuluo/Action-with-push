@@ -151,15 +151,15 @@ jobs:
          git push  $BITBUCKET_URL
 
 
-      - name: Prepare artifact
-        run: |
-          find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
-          mkdir targets
-          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_FACTORY_NAME ./targets
-          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_SYSUPGRADE_NAME ./targets
+#      - name: Prepare artifact
+#        run: |
+#          find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
+#          mkdir targets
+#          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_FACTORY_NAME ./targets
+#          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_SYSUPGRADE_NAME ./targets
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@master
-        with:
-          name: OPENWRT-EXT4-FACTORY-SYSUPGRADE
-          path: ./targets/
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@master
+#        with:
+#          name: OPENWRT-EXT4-FACTORY-SYSUPGRADE
+#          path: ./targets/

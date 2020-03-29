@@ -150,15 +150,15 @@ jobs:
          git commit -m "Build by github actions"
          git push  $BITBUCKET_URL
 
-      - name: Prepare artifact
-        run: |
-          find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
-          mkdir targets
-          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_IMG_NAME ./targets
-          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_VMDK_NAME ./targets
+#      - name: Prepare artifact
+#        run: |
+#          find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
+#          mkdir targets
+#          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_IMG_NAME ./targets
+#          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_VMDK_NAME ./targets
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@master
-        with:
-          name: OPENWRT-EXT4-VMDK-IMG
-          path: ./targets/
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@master
+#        with:
+#          name: OPENWRT-EXT4-VMDK-IMG
+#          path: ./targets/
