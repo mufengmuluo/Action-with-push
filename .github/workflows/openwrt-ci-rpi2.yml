@@ -146,10 +146,12 @@ jobs:
          git push  $BITBUCKET_URL
 
       - name: Prepare artifact
-        run: find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
+        run: |
+          find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
+          mv ./lede/bin/targets/ ./
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
           name: OPENWRT-$DEVICE-$DEVICE_SUB
-          path: ./lede/bin/targets/$DEVICE/$DEVICE_SUB/
+          path: ./targets/
