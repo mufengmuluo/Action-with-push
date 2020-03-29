@@ -1,0 +1,5 @@
+FROM scratch
+LABEL maintainer="muyeyifeng - https://bitbucket.org/muyeyifeng"
+ADD openwrt-x86-64-generic-rootfs.tar.gz /
+USER root
+CMD /sbin/init

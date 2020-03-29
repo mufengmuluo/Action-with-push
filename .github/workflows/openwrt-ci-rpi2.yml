@@ -24,8 +24,11 @@ env:
   BITBUCKET_EMAIL: muyeyifeng@bitbucket.org
   BITBUCKET_NAME: docker-rpi2-def
   BITBUCKET_URL: muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
+  DOCKERFILE: rpi2-Dockerfile
   SSH_KEY: bitbucket.pem
   ROOTFS_FILE_NAME: openwrt-bcm27xx-bcm2709-rpi-2-rootfs.tar.gz
+  EXT4_FACTORY_NAME: openwrt-bcm27xx-bcm2709-rpi-2-ext4-factory.img.gz
+  EXT4_SYSUPGRADE_NAME: openwrt-bcm27xx-bcm2709-rpi-2-ext4-sysupgrade.img.gz
 
 jobs:
 
@@ -122,11 +125,13 @@ jobs:
 
       - name: Prepare to push
         run: |
-          rm -rf ./$BITBUCKET_NAME/$ROOTFS_FILE_NAME
+          rm -rf ./$BITBUCKET_NAME/*
           echo "======================="
           ls ./$BITBUCKET_NAME/
           echo "======================="
           cp ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$ROOTFS_FILE_NAME ./$BITBUCKET_NAME/
+          cp ./$DOCKERFILE_NAME ./$BITBUCKET_NAME/Dockerfile
+          cp ./README.md ./$BITBUCKET_NAME/README.md
           ls ./$BITBUCKET_NAME/
           echo "======================="
 
@@ -145,13 +150,16 @@ jobs:
          git commit -m "Build by github actions"
          git push  $BITBUCKET_URL
 
+
       - name: Prepare artifact
         run: |
           find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
-          mv ./lede/bin/targets/ ./
+          mkdir targets
+          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_FACTORY_NAME ./targets
+          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_SYSUPGRADE_NAME ./targets
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
-          name: OPENWRT-$DEVICE-$DEVICE_SUB
+          name: OPENWRT-EXT4-FACTORY-SYSUPGRADE
           path: ./targets/

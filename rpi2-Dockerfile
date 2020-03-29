@@ -1,0 +1,5 @@
+FROM scratch
+LABEL maintainer="muyeyifeng - https://bitbucket.org/muyeyifeng"
+ADD openwrt-bcm27xx-bcm2709-rpi-2-rootfs.tar.gz /
+USER root
+CMD /sbin/init

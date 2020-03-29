@@ -1,0 +1,5 @@
+FROM scratch
+LABEL maintainer="muyeyifeng - https://bitbucket.org/muyeyifeng"
+ADD openwrt-armvirt-64-default-rootfs.tar.gz /
+USER root
+CMD /sbin/init

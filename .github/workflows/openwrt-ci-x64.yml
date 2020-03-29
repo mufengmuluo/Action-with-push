@@ -24,8 +24,11 @@ env:
   BITBUCKET_EMAIL: muyeyifeng@bitbucket.org
   BITBUCKET_NAME: lede-x64
   BITBUCKET_URL: muyeyifeng@bitbucket.org:muyeyifeng/lede-x64.git
+  DOCKERFILE: x64-Dockerfile
   SSH_KEY: bitbucket.pem
   ROOTFS_FILE_NAME: openwrt-x86-64-generic-rootfs.tar.gz
+  EXT4_VMDK_NAME: openwrt-x86-64-combined-ext4.vmdk
+  EXT4_IMG_NAME: openwrt-x86-64-combined-ext4.img
 
 jobs:
 
@@ -122,11 +125,13 @@ jobs:
 
       - name: Prepare to push
         run: |
-          rm -rf ./$BITBUCKET_NAME/$ROOTFS_FILE_NAME
+          rm -rf ./$BITBUCKET_NAME/*
           echo "======================="
           ls ./$BITBUCKET_NAME/
           echo "======================="
           cp ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$ROOTFS_FILE_NAME ./$BITBUCKET_NAME/
+          cp ./$DOCKERFILE_NAME ./$BITBUCKET_NAME/Dockerfile
+          cp ./README.md ./$BITBUCKET_NAME/README.md
           ls ./$BITBUCKET_NAME/
           echo "======================="
 
@@ -148,10 +153,12 @@ jobs:
       - name: Prepare artifact
         run: |
           find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
-          mv ./lede/bin/targets/ ./
+          mkdir targets
+          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_IMG_NAME ./targets
+          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_VMDK_NAME ./targets
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
-          name: OPENWRT-$DEVICE-$DEVICE_SUB
+          name: OPENWRT-EXT4-VMDK-IMG
           path: ./targets/

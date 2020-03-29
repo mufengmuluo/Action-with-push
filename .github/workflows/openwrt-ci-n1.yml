@@ -24,6 +24,7 @@ env:
   BITBUCKET_EMAIL: muyeyifeng@bitbucket.org
   BITBUCKET_NAME: lede-n1
   BITBUCKET_URL: muyeyifeng@bitbucket.org:muyeyifeng/lede-n1.git
+  DOCKERFILE: n1-Dockerfile
   SSH_KEY: bitbucket.pem
   ROOTFS_FILE_NAME: openwrt-armvirt-64-default-rootfs.tar.gz
 
@@ -122,11 +123,13 @@ jobs:
 
       - name: Prepare to push
         run: |
-          rm -rf ./$BITBUCKET_NAME/$ROOTFS_FILE_NAME
+          rm -rf ./$BITBUCKET_NAME/*
           echo "======================="
           ls ./$BITBUCKET_NAME/
           echo "======================="
           cp ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$ROOTFS_FILE_NAME ./$BITBUCKET_NAME/
+          cp ./$DOCKERFILE_NAME ./$BITBUCKET_NAME/Dockerfile
+          cp ./README.md ./$BITBUCKET_NAME/README.md
           ls ./$BITBUCKET_NAME/
           echo "======================="
 
@@ -144,14 +147,3 @@ jobs:
          git add .
          git commit -m "Build by github actions"
          git push  $BITBUCKET_URL
-
-      - name: Prepare artifact
-        run: |
-          find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
-          mv ./lede/bin/targets/ ./
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@master
-        with:
-          name: OPENWRT-$DEVICE-$DEVICE_SUB
-          path: ./targets/
