@@ -20,7 +20,8 @@ env:
   DEVICE: bcm27xx
   DEVICE_SUB: bcm2709
   CONFIGFILE_NAME: rpi2.config.seed
-  BITBUCKET_TESTUSER: muyeyifeng@bitbucket.org
+  BITBUCKET_USER: muyeyifeng
+  BITBUCKET_EMAIL: muyeyifeng@bitbucket.org
   BITBUCKET_NAME: docker-rpi2-def
   BITBUCKET_URL: muyeyifeng@bitbucket.org:muyeyifeng/docker-rpi2-def.git
   SSH_KEY: bitbucket.pem
@@ -69,7 +70,7 @@ jobs:
          ssh-add $SSH_KEY
          mkdir -p ~/.ssh/
          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
-         ssh -T $BITBUCKET_TESTUSER
+         ssh -T $BITBUCKET_EMAIL
          git clone  $BITBUCKET_URL
          git clone  https://github.com/coolsnowwolf/lede
 
@@ -136,8 +137,10 @@ jobs:
          ssh-add $SSH_KEY
          mkdir -p ~/.ssh/
          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
-         ssh -T $BITBUCKET_TESTUSER
+         ssh -T $BITBUCKET_EMAIL
          cd $BITBUCKET_NAME
+         git config --global user.email '$BITBUCKET_EMAIL'
+         git config --global user.name '$BITBUCKET_USER'
          git add .
          git commit -m "Build by github actions"
          git push  $BITBUCKET_URL

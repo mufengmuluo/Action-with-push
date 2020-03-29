@@ -16,6 +16,17 @@ on:
     branches: 
       - master
 
+env:
+  DEVICE: x86
+  DEVICE_SUB: 64
+  CONFIGFILE_NAME: x64.config.seed
+  BITBUCKET_USER: muyeyifeng
+  BITBUCKET_EMAIL: muyeyifeng@bitbucket.org
+  BITBUCKET_NAME: lede-x64
+  BITBUCKET_URL: muyeyifeng@bitbucket.org:muyeyifeng/lede-x64.git
+  SSH_KEY: bitbucket.pem
+  ROOTFS_FILE_NAME: openwrt-x86-64-generic-rootfs.tar.gz
+
 jobs:
 
   build:
@@ -52,15 +63,15 @@ jobs:
 
           df -h
 
-      - name: Add sshkey&Clone source code
+      - name: Add SSH-key&Clone source code
         run: |
          eval `ssh-agent`
-         chmod 600 bitbucket.pem
-         ssh-add bitbucket.pem
+         chmod 600 $SSH_KEY
+         ssh-add $SSH_KEY
          mkdir -p ~/.ssh/
          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
-         ssh -T muyeyifeng@bitbucket.org
-         git clone  muyeyifeng@bitbucket.org:muyeyifeng/lede-x64.git
+         ssh -T $BITBUCKET_EMAIL
+         git clone  $BITBUCKET_URL
          git clone  https://github.com/coolsnowwolf/lede
 
       - name: Update feeds
@@ -68,11 +79,10 @@ jobs:
           echo "======================="
           echo "Docker"
           echo "======================="
-          ls lede-x64
+          ls $BITBUCKET_NAME
           echo "======================="
-          echo "****************************************"
           echo "======================="
-          echo "lede"
+          echo "Lede"
           echo "======================="
           ls lede
           echo "======================="
@@ -82,7 +92,7 @@ jobs:
 
       - name: Generate configuration file
         run: |
-          cp x64.config.seed lede/defconfig
+          cp $CONFIGFILE_NAME lede/defconfig
           cd lede
           ls
           cat defconfig >> .config
@@ -112,31 +122,34 @@ jobs:
 
       - name: Prepare to push
         run: |
-          rm -rf ./lede-x64/openwrt-x86-64-generic-rootfs.tar.gz
+          rm -rf ./$BITBUCKET_NAME/$ROOTFS_FILE_NAME
           echo "======================="
-          ls ./lede-x64/
+          ls ./$BITBUCKET_NAME/
           echo "======================="
-          cp ./lede/bin/targets/x86/64/openwrt-x86-64-generic-rootfs.tar.gz ./lede-x64/
-          ls ./lede-x64/
+          cp ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$ROOTFS_FILE_NAME ./$BITBUCKET_NAME/
+          ls ./$BITBUCKET_NAME/
           echo "======================="
 
       - name: Push bitbucket
         run: |
-          eval `ssh-agent`
-          chmod 600 bitbucket.pem
-          ssh-add bitbucket.pem
-          mkdir -p ~/.ssh/
-          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
-          ssh -T muyeyifeng@bitbucket.org
-          cd lede-x64
-          git push  muyeyifeng@bitbucket.org:muyeyifeng/lede-x64.git
+         eval `ssh-agent`
+         chmod 600 $SSH_KEY
+         ssh-add $SSH_KEY
+         mkdir -p ~/.ssh/
+         ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+         ssh -T $BITBUCKET_EMAIL
+         cd $BITBUCKET_NAME
+         git config --global user.email '$BITBUCKET_EMAIL'
+         git config --global user.name '$BITBUCKET_USER'
+         git add .
+         git commit -m "Build by github actions"
+         git push  $BITBUCKET_URL
 
+      - name: Prepare artifact
+        run: find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
 
-      #- name: Prepare artifact
-       #run: find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
-
-      #- name: Upload artifact
-        #uses: actions/upload-artifact@master
-        #with:
-          #name: OpenWrt firmware
-          #path: ./lede/bin/targets/
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: OPENWRT-$DEVICE-$DEVICE_SUB
+          path: ./lede/bin/targets/$DEVICE/$DEVICE_SUB/
