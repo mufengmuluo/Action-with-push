@@ -191,3 +191,9 @@ docker.io/muyeyifeng/rpi2-lede************latest****************0077368fb938****
 
 
 docker run --restart always --name openwrt -d --network macnet --privileged 0077368fb938 /sbin/init
+
+
+
+
+
+#######云编译直接生成DOCKER见DOCX文件说明###########
