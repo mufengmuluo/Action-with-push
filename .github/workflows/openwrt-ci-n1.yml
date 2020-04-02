@@ -10,8 +10,6 @@
 name: OpenWrt-CI-N1
 
 on:
-  schedule:
-    - cron: 0 19 * * *
   push:
     branches: 
       - master
@@ -19,13 +17,12 @@ on:
 env:
   DEVICE: armvirt
   DEVICE_SUB: 64
-  CONFIGFILE_NAME: n1.config.seed
+  CONFIGFILE_NAME: n1.defconfig
   BITBUCKET_USER: muyeyifeng
   BITBUCKET_EMAIL: muyeyifeng@bitbucket.org
   BITBUCKET_NAME: lede-n1
   BITBUCKET_URL: muyeyifeng@bitbucket.org:muyeyifeng/lede-n1.git
   DOCKERFILE: n1-Dockerfile
-  SSH_KEY: bitbucket.pem
   ROOTFS_FILE_NAME: openwrt-armvirt-64-default-rootfs.tar.gz
 
 jobs:
@@ -66,9 +63,10 @@ jobs:
 
       - name: Add SSH-key&Clone source code
         run: |
+         echo "${{ secrets.BITBUCKET_KEY }}" >bitbucket.pem
          eval `ssh-agent`
-         chmod 600 $SSH_KEY
-         ssh-add $SSH_KEY
+         chmod 600 bitbucket.pem
+         ssh-add bitbucket.pem
          mkdir -p ~/.ssh/
          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
          ssh -T $BITBUCKET_EMAIL
@@ -135,9 +133,10 @@ jobs:
 
       - name: Push bitbucket
         run: |
+         echo "${{ secrets.BITBUCKET_KEY }}" >bitbucket.pem
          eval `ssh-agent`
-         chmod 600 $SSH_KEY
-         ssh-add $SSH_KEY
+         chmod 600 bitbucket.pem
+         ssh-add bitbucket.pem
          mkdir -p ~/.ssh/
          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
          ssh -T $BITBUCKET_EMAIL

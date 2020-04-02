@@ -10,8 +10,6 @@
 name: OpenWrt-CI-X64
 
 on:
-  schedule:
-    - cron: 0 19 * * *
   push:
     branches: 
       - master
@@ -19,13 +17,12 @@ on:
 env:
   DEVICE: x86
   DEVICE_SUB: 64
-  CONFIGFILE_NAME: x64.config.seed
+  CONFIGFILE_NAME: x64.defconfig
   BITBUCKET_USER: muyeyifeng
   BITBUCKET_EMAIL: muyeyifeng@bitbucket.org
   BITBUCKET_NAME: lede-x64
   BITBUCKET_URL: muyeyifeng@bitbucket.org:muyeyifeng/lede-x64.git
   DOCKERFILE: x64-Dockerfile
-  SSH_KEY: bitbucket.pem
   ROOTFS_FILE_NAME: openwrt-x86-64-generic-rootfs.tar.gz
   EXT4_VMDK_NAME: openwrt-x86-64-combined-ext4.vmdk
   EXT4_IMG_NAME: openwrt-x86-64-combined-ext4.img
@@ -68,9 +65,10 @@ jobs:
 
       - name: Add SSH-key&Clone source code
         run: |
+         echo "${{ secrets.BITBUCKET_KEY }}" >bitbucket.pem
          eval `ssh-agent`
-         chmod 600 $SSH_KEY
-         ssh-add $SSH_KEY
+         chmod 600 bitbucket.pem
+         ssh-add bitbucket.pem
          mkdir -p ~/.ssh/
          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
          ssh -T $BITBUCKET_EMAIL
@@ -137,9 +135,10 @@ jobs:
 
       - name: Push bitbucket
         run: |
+         echo "${{ secrets.BITBUCKET_KEY }}" >bitbucket.pem
          eval `ssh-agent`
-         chmod 600 $SSH_KEY
-         ssh-add $SSH_KEY
+         chmod 600 bitbucket.pem
+         ssh-add bitbucket.pem
          mkdir -p ~/.ssh/
          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
          ssh -T $BITBUCKET_EMAIL
@@ -149,16 +148,3 @@ jobs:
          git add .
          git commit -m "Build by github actions"
          git push  $BITBUCKET_URL
-
-#      - name: Prepare artifact
-#        run: |
-#          find ./lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
-#          mkdir targets
-#          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_IMG_NAME ./targets
-#          mv ./lede/bin/targets/$DEVICE/$DEVICE_SUB/$EXT4_VMDK_NAME ./targets
-
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@master
-#        with:
-#          name: OPENWRT-EXT4-VMDK-IMG
-#          path: ./targets/
